@@ -56,18 +56,12 @@ func (win *window) is_full() bool {
 }
 
 type day01bSolution struct {
-	depth_increases int
-	depth_window    *window
-}
-
-func makeDay01bSolution() day01bSolution {
-	return day01bSolution{
-		depth_increases: 0,
-		depth_window: newWindow(3),
-	}
 }
 
 func (soln day01bSolution) Solve() error {
+	depth_increases := 0
+	depth_window := newWindow(3)
+
 	for {
 		var depth int
 		_, err := fmt.Scan(&depth)
@@ -77,24 +71,23 @@ func (soln day01bSolution) Solve() error {
 			return err
 		}
 
-		if soln.depth_window.is_full() {
-			prev_depth, _ := soln.depth_window.pop()
+		if depth_window.is_full() {
+			prev_depth, _ := depth_window.pop()
 
 			if depth > prev_depth {
-				soln.depth_increases++
+				depth_increases++
 			}
 
 		}
-		soln.depth_window.push(depth)
+		depth_window.push(depth)
 	}
 
-	fmt.Println(soln.depth_increases)
+	fmt.Println(depth_increases)
 	return nil
 }
 
 func init() {
-	soln := makeDay01bSolution()
-	if err := registry.RegisterSolution("day01b", soln); err != nil {
+	if err := registry.RegisterSolution("day01b", day01bSolution{}); err != nil {
 		fmt.Println("Failed to register day01b solution", err)
 	}
 }

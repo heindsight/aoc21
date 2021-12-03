@@ -9,11 +9,12 @@ import (
 )
 
 type day02aSolution struct {
-	horizontal int
-	depth      int
 }
 
 func (soln day02aSolution) Solve() error {
+	horizontal := 0
+	depth := 0
+
 	for {
 		var command string
 		var arg int
@@ -26,17 +27,17 @@ func (soln day02aSolution) Solve() error {
 
 		switch command {
 		case "forward":
-			soln.horizontal += arg
+			horizontal += arg
 		case "down":
-			soln.depth += arg
+			depth += arg
 		case "up":
-			soln.depth -= arg
+			depth -= arg
 		default:
 			return errors.New("Unknown command: " + command)
 		}
 	}
 
-	fmt.Println(soln.horizontal * soln.depth)
+	fmt.Println(horizontal * depth)
 	return nil
 }
 

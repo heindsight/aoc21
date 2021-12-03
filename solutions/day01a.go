@@ -8,10 +8,10 @@ import (
 )
 
 type day01aSolution struct {
-	depth_increases int
 }
 
 func (soln day01aSolution) Solve() error {
+	depth_increases := 0
 	first := true
 	prev_depth := 0
 
@@ -27,12 +27,12 @@ func (soln day01aSolution) Solve() error {
 		if first {
 			first = false
 		} else if depth > prev_depth {
-			soln.depth_increases++
+			depth_increases++
 		}
 		prev_depth = depth
 	}
 
-	fmt.Println(soln.depth_increases)
+	fmt.Println(depth_increases)
 	return nil
 }
 
