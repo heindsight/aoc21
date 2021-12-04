@@ -11,7 +11,7 @@ import (
 type day03aSolution struct {
 }
 
-func (soln day03aSolution) Solve() error {
+func (soln day03aSolution) Solve() {
 	var bit_counts []int
 	gamma := 0
 	epsilon := 0
@@ -23,7 +23,7 @@ func (soln day03aSolution) Solve() error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			panic(err)
 		}
 
 		if num_lines == 0 {
@@ -46,11 +46,10 @@ func (soln day03aSolution) Solve() error {
 	}
 
 	fmt.Println(gamma * epsilon)
-	return nil
 }
 
 func init() {
 	if err := registry.RegisterSolution("day03a", day03aSolution{}); err != nil {
-		fmt.Println("Failed to register day03a solution", err)
+		panic(err)
 	}
 }

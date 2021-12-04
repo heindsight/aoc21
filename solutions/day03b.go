@@ -13,14 +13,18 @@ type day03bSolution struct {
 
 type bitString []rune
 
-func (bits bitString) toInt() (int64, error) {
+func (bits bitString) toInt() int64 {
 	bitstr := string(bits)
-	return strconv.ParseInt(bitstr, 2, 0)
+	val, err := strconv.ParseInt(bitstr, 2, 0)
+	if err != nil {
+		panic(err)
+	}
+	return val
 }
 
 type bitStringList []*bitString
 
-func (soln day03bSolution) Solve() error {
+func (soln day03bSolution) Solve() {
 	bit_strings := bitStringList{}
 
 	for {
@@ -29,23 +33,18 @@ func (soln day03bSolution) Solve() error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			panic(err)
 		}
 
 		bits := bitString(bitstring)
 		bit_strings = append(bit_strings, &bits)
 	}
 
-	oxygen_rating, co2_rating, err := soln.filter_bits(bit_strings)
-	if err != nil {
-		return err
-	}
-
+	oxygen_rating, co2_rating := soln.filter_bits(bit_strings)
 	fmt.Println(oxygen_rating * co2_rating)
-	return nil
 }
 
-func (soln day03bSolution) filter_bits(bitstrings bitStringList) (int64, int64, error) {
+func (soln day03bSolution) filter_bits(bitstrings bitStringList) (int64, int64) {
 	most_common, least_common := soln.split_by_bit(bitstrings, 0)
 
 	for pos := 1; len(most_common) > 1; pos += 1 {
@@ -55,16 +54,7 @@ func (soln day03bSolution) filter_bits(bitstrings bitStringList) (int64, int64, 
 		_, least_common = soln.split_by_bit(least_common, pos)
 	}
 
-	most_int, err := most_common[0].toInt()
-	if err != nil {
-		return -1, -1, err
-	}
-	least_int, err := least_common[0].toInt()
-	if err != nil {
-		return -1, -1, err
-	}
-
-	return most_int, least_int, nil
+	return most_common[0].toInt(), least_common[0].toInt()
 }
 
 func (soln day03bSolution) split_by_bit(bitstrings bitStringList, pos int) (bitStringList, bitStringList) {
@@ -89,6 +79,6 @@ func (soln day03bSolution) split_by_bit(bitstrings bitStringList, pos int) (bitS
 
 func init() {
 	if err := registry.RegisterSolution("day03b", day03bSolution{}); err != nil {
-		fmt.Println("Failed to register day03b solution", err)
+		panic(err)
 	}
 }

@@ -58,7 +58,7 @@ func (win *window) is_full() bool {
 type day01bSolution struct {
 }
 
-func (soln day01bSolution) Solve() error {
+func (soln day01bSolution) Solve() {
 	depth_increases := 0
 	depth_window := newWindow(3)
 
@@ -68,7 +68,7 @@ func (soln day01bSolution) Solve() error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			panic(err)
 		}
 
 		if depth_window.is_full() {
@@ -83,11 +83,10 @@ func (soln day01bSolution) Solve() error {
 	}
 
 	fmt.Println(depth_increases)
-	return nil
 }
 
 func init() {
 	if err := registry.RegisterSolution("day01b", day01bSolution{}); err != nil {
-		fmt.Println("Failed to register day01b solution", err)
+		panic(err)
 	}
 }

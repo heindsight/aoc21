@@ -1,7 +1,6 @@
 package solutions
 
 import (
-	"errors"
 	"fmt"
 	"io"
 
@@ -11,7 +10,7 @@ import (
 type day02bSolution struct {
 }
 
-func (soln day02bSolution) Solve() error {
+func (soln day02bSolution) Solve() {
 	aim := 0
 	horizontal := 0
 	depth := 0
@@ -23,7 +22,7 @@ func (soln day02bSolution) Solve() error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			panic(err)
 		}
 
 		switch command {
@@ -35,16 +34,15 @@ func (soln day02bSolution) Solve() error {
 		case "up":
 			aim -= arg
 		default:
-			return errors.New("Unknown command: " + command)
+			panic("Unknown command: " + command)
 		}
 	}
 
 	fmt.Println(horizontal * depth)
-	return nil
 }
 
 func init() {
 	if err := registry.RegisterSolution("day02b", day02bSolution{}); err != nil {
-		fmt.Println("Failed to register day02b solution", err)
+		panic(err)
 	}
 }

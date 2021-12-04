@@ -10,7 +10,7 @@ import (
 type day01aSolution struct {
 }
 
-func (soln day01aSolution) Solve() error {
+func (soln day01aSolution) Solve() {
 	depth_increases := 0
 	first := true
 	prev_depth := 0
@@ -21,7 +21,7 @@ func (soln day01aSolution) Solve() error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err
+			panic(err)
 		}
 
 		if first {
@@ -33,11 +33,10 @@ func (soln day01aSolution) Solve() error {
 	}
 
 	fmt.Println(depth_increases)
-	return nil
 }
 
 func init() {
 	if err := registry.RegisterSolution("day01a", day01aSolution{}); err != nil {
-		fmt.Println("Failed to register day01a solution", err)
+		panic(err)
 	}
 }

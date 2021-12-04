@@ -3,11 +3,10 @@ package registry
 import "errors"
 
 type Solution interface {
-	Solve() error
+	Solve()
 }
 
 var registry = map[string]Solution{}
-
 
 func RegisterSolution(name string, soln Solution) error {
 	_, exists := registry[name]
