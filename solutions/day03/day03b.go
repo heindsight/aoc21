@@ -1,4 +1,4 @@
-package solutions
+package day03
 
 import (
 	"fmt"
@@ -7,9 +7,6 @@ import (
 
 	"github.com/heindsight/aoc21/registry"
 )
-
-type day03bSolution struct {
-}
 
 type bitString []rune
 
@@ -24,7 +21,7 @@ func (bits bitString) toInt() int64 {
 
 type bitStringList []*bitString
 
-func (soln day03bSolution) Solve() {
+func solveDay03b() {
 	bit_strings := bitStringList{}
 
 	for {
@@ -40,24 +37,24 @@ func (soln day03bSolution) Solve() {
 		bit_strings = append(bit_strings, &bits)
 	}
 
-	oxygen_rating, co2_rating := soln.filter_bits(bit_strings)
+	oxygen_rating, co2_rating := filter_bits(bit_strings)
 	fmt.Println(oxygen_rating * co2_rating)
 }
 
-func (soln day03bSolution) filter_bits(bitstrings bitStringList) (int64, int64) {
-	most_common, least_common := soln.split_by_bit(bitstrings, 0)
+func filter_bits(bitstrings bitStringList) (int64, int64) {
+	most_common, least_common := split_by_bit(bitstrings, 0)
 
 	for pos := 1; len(most_common) > 1; pos += 1 {
-		most_common, _ = soln.split_by_bit(most_common, pos)
+		most_common, _ = split_by_bit(most_common, pos)
 	}
 	for pos := 1; len(least_common) > 1; pos += 1 {
-		_, least_common = soln.split_by_bit(least_common, pos)
+		_, least_common = split_by_bit(least_common, pos)
 	}
 
 	return most_common[0].toInt(), least_common[0].toInt()
 }
 
-func (soln day03bSolution) split_by_bit(bitstrings bitStringList, pos int) (bitStringList, bitStringList) {
+func split_by_bit(bitstrings bitStringList, pos int) (bitStringList, bitStringList) {
 	ones := bitStringList{}
 	zeros := bitStringList{}
 
@@ -78,7 +75,7 @@ func (soln day03bSolution) split_by_bit(bitstrings bitStringList, pos int) (bitS
 }
 
 func init() {
-	if err := registry.RegisterSolution("day03b", day03bSolution{}); err != nil {
+	if err := registry.RegisterSolution("day03b", solveDay03b); err != nil {
 		panic(err)
 	}
 }

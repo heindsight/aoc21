@@ -1,4 +1,4 @@
-package solutions
+package day01
 
 import (
 	"fmt"
@@ -7,10 +7,7 @@ import (
 	"github.com/heindsight/aoc21/registry"
 )
 
-type day01aSolution struct {
-}
-
-func (soln day01aSolution) Solve() {
+func solveDay01a() {
 	depth_increases := 0
 	first := true
 	prev_depth := 0
@@ -36,7 +33,7 @@ func (soln day01aSolution) Solve() {
 }
 
 func init() {
-	if err := registry.RegisterSolution("day01a", day01aSolution{}); err != nil {
+	if err := registry.RegisterSolution("day01a", solveDay01a); err != nil {
 		panic(err)
 	}
 }

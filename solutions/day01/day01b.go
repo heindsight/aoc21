@@ -1,4 +1,4 @@
-package solutions
+package day01
 
 import (
 	"errors"
@@ -55,10 +55,7 @@ func (win *window) is_full() bool {
 	return win.count == cap(win.values)
 }
 
-type day01bSolution struct {
-}
-
-func (soln day01bSolution) Solve() {
+func solveDay01b() {
 	depth_increases := 0
 	depth_window := newWindow(3)
 
@@ -86,7 +83,7 @@ func (soln day01bSolution) Solve() {
 }
 
 func init() {
-	if err := registry.RegisterSolution("day01b", day01bSolution{}); err != nil {
+	if err := registry.RegisterSolution("day01b", solveDay01b); err != nil {
 		panic(err)
 	}
 }

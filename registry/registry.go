@@ -2,9 +2,7 @@ package registry
 
 import "errors"
 
-type Solution interface {
-	Solve()
-}
+type Solution func()
 
 var registry = map[string]Solution{}
 
