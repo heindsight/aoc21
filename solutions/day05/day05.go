@@ -51,36 +51,37 @@ func (s *Segment) walk() chan Point {
 	return out
 }
 
-func solveDay05(include_diagonal bool) func() {
-	solve := func() {
-		points := map[Point]int{}
-		vent_map := []Segment{}
-		intersections := 0
+type Day05 struct {
+	include_diagonal bool
+}
 
-		for {
-			s, err := readSegment()
-			if err == io.EOF {
-				break
-			} else if err != nil {
-				panic(err)
-			}
+func (d *Day05) solve() {
+	points := map[Point]int{}
+	vent_map := []Segment{}
+	intersections := 0
 
-			if include_diagonal || s.is_horiz() || s.is_vert() {
-				vent_map = append(vent_map, s)
-			}
+	for {
+		s, err := readSegment()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			panic(err)
 		}
 
-		for _, segment := range vent_map {
-			for p := range segment.walk() {
-				points[p]++
-				if points[p] == 2 {
-					intersections++
-				}
-			}
+		if d.include_diagonal || s.is_horiz() || s.is_vert() {
+			vent_map = append(vent_map, s)
 		}
-		fmt.Println(intersections)
 	}
-	return solve
+
+	for _, segment := range vent_map {
+		for p := range segment.walk() {
+			points[p]++
+			if points[p] == 2 {
+				intersections++
+			}
+		}
+	}
+	fmt.Println(intersections)
 }
 
 func readSegment() (Segment, error) {
@@ -97,10 +98,12 @@ func readSegment() (Segment, error) {
 }
 
 func init() {
-	if err := registry.RegisterSolution("day05a", solveDay05(false)); err != nil {
+	day05a := Day05{include_diagonal: false};
+	if err := registry.RegisterSolution("day05a", day05a.solve); err != nil {
 		panic(err)
 	}
-	if err := registry.RegisterSolution("day05b", solveDay05(true)); err != nil {
+	day05b := Day05{include_diagonal: true};
+	if err := registry.RegisterSolution("day05b", day05b.solve); err != nil {
 		panic(err)
 	}
 }

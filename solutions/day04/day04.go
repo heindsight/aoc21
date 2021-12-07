@@ -82,23 +82,24 @@ func (board *bingoBoard) calcWinValue(draws map[int]int) int {
 	return win_value
 }
 
-func solveDay04(letTheSquidWin bool) registry.Solution {
-	soln := func() {
-		draws := readDraws()
-		boards := readBoards()
-		results := playBoards(boards, draws)
+type Day04 struct {
+	let_the_squid_win bool
+}
 
-		var outcome bingoResult
+func (d *Day04) solve() {
+	draws := readDraws()
+	boards := readBoards()
+	results := playBoards(boards, draws)
 
-		if letTheSquidWin {
-			outcome = lastWin(results)
-		} else {
-			outcome = firstWin(results)
-		}
+	var outcome bingoResult
 
-		fmt.Println(outcome.score)
+	if d.let_the_squid_win {
+		outcome = lastWin(results)
+	} else {
+		outcome = firstWin(results)
 	}
-	return soln
+
+	fmt.Println(outcome.score)
 }
 
 func readDraws() map[int]int {
@@ -173,10 +174,12 @@ func lastWin(results []bingoResult) bingoResult {
 }
 
 func init() {
-	if err := registry.RegisterSolution("day04a", solveDay04(false)); err != nil {
+	day04a := Day04{let_the_squid_win: false}
+	if err := registry.RegisterSolution("day04a", day04a.solve); err != nil {
 		panic(err)
 	}
-	if err := registry.RegisterSolution("day04b", solveDay04(true)); err != nil {
+	day04b := Day04{let_the_squid_win: true}
+	if err := registry.RegisterSolution("day04b", day04b.solve); err != nil {
 		panic(err)
 	}
 }
