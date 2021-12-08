@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/heindsight/aoc21/registry"
-	"github.com/heindsight/aoc21/utils"
+	numeric "github.com/heindsight/aoc21/utils/numeric"
 )
 
 type Point struct {
@@ -38,7 +38,7 @@ func (s *Segment) walk() chan Point {
 		dx := s.points[1].x - s.points[0].x
 		dy := s.points[1].y - s.points[0].y
 
-		length := utils.Max(utils.Abs(dx), utils.Abs(dy))
+		length := numeric.Max(numeric.Abs(dx), numeric.Abs(dy))
 
 		for i := 0; i <= length; i++ {
 			out <- s.points[0].offset(

@@ -2,10 +2,9 @@ package day06
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
 	"github.com/heindsight/aoc21/registry"
+	"github.com/heindsight/aoc21/utils/input"
 )
 
 const (
@@ -41,20 +40,10 @@ func (d *Day06) solve() {
 }
 
 func readInitialState() map[int]int {
-	var line string
-	_, err := fmt.Scanf("%s\n", &line)
-	if err != nil {
-		panic(err)
-	}
-
 	fish := map[int]int{}
 
-	for _, number := range strings.Split(line, ",") {
-		value, err := strconv.Atoi(number)
-		if err != nil {
-			panic(err)
-		}
-		fish[value]++
+	for item := range input.ReadCommaSepLineInts() {
+		fish[item.Value]++
 	}
 	return fish
 }

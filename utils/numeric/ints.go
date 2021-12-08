@@ -1,4 +1,6 @@
-package utils
+package numeric
+
+import "math"
 
 func Abs(a int) int {
 	if a < 0 {

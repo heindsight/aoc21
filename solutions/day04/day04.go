@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"strconv"
-	"strings"
 
 	"github.com/heindsight/aoc21/registry"
+	"github.com/heindsight/aoc21/utils/input"
 )
 
 const boardSize = 5
@@ -103,20 +102,10 @@ func (d *Day04) solve() {
 }
 
 func readDraws() map[int]int {
-	var line string
-	_, err := fmt.Scanf("%s\n", &line)
-	if err != nil {
-		panic(err)
-	}
-
 	draws := map[int]int{}
 
-	for pos, number := range strings.Split(line, ",") {
-		value, err := strconv.Atoi(number)
-		if err != nil {
-			panic(err)
-		}
-		draws[value] = pos
+	for item := range input.ReadCommaSepLineInts() {
+		draws[item.Value] = item.Index
 	}
 	return draws
 }
