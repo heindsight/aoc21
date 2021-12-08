@@ -7,4 +7,5 @@ import (
 	_ "github.com/heindsight/aoc21/solutions/day04"
 	_ "github.com/heindsight/aoc21/solutions/day05"
 	_ "github.com/heindsight/aoc21/solutions/day06"
+	_ "github.com/heindsight/aoc21/solutions/day07"
 )
