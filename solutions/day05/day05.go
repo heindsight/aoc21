@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/heindsight/aoc21/registry"
-	numeric "github.com/heindsight/aoc21/utils/numeric"
+	"github.com/heindsight/aoc21/utils/numeric"
 )
 
 type Point struct {
@@ -27,9 +27,6 @@ func (s *Segment) is_horiz() bool {
 
 func (s *Segment) is_vert() bool {
 	return s.points[0].y == s.points[1].y
-}
-
-func (s *Segment) do_walk(out chan Point) {
 }
 
 func (s *Segment) walk() chan Point {

@@ -82,7 +82,7 @@ func (board *bingoBoard) calcWinValue(draws map[int]int) int {
 }
 
 type Day04 struct {
-	let_the_squid_win bool
+	win_strategy func([]bingoResult) bingoResult
 }
 
 func (d *Day04) solve() {
@@ -90,13 +90,7 @@ func (d *Day04) solve() {
 	boards := readBoards()
 	results := playBoards(boards, draws)
 
-	var outcome bingoResult
-
-	if d.let_the_squid_win {
-		outcome = lastWin(results)
-	} else {
-		outcome = firstWin(results)
-	}
+	outcome := d.win_strategy(results)
 
 	fmt.Println(outcome.score)
 }
@@ -163,11 +157,11 @@ func lastWin(results []bingoResult) bingoResult {
 }
 
 func init() {
-	day04a := Day04{let_the_squid_win: false}
+	day04a := Day04{win_strategy: firstWin}
 	if err := registry.RegisterSolution("day04a", day04a.solve); err != nil {
 		panic(err)
 	}
-	day04b := Day04{let_the_squid_win: true}
+	day04b := Day04{win_strategy: lastWin}
 	if err := registry.RegisterSolution("day04b", day04b.solve); err != nil {
 		panic(err)
 	}
