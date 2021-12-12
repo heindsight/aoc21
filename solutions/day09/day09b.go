@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/heindsight/aoc21/registry"
+	"github.com/heindsight/aoc21/utils/stack"
 )
 
 func solveDay09b() {
@@ -25,42 +26,26 @@ func solveDay09b() {
 	fmt.Println(basin_prod)
 }
 
-type Stack struct {
-	stack []Point
-}
-
-func MakeStack() *Stack {
-	return &Stack{stack: make([]Point, 0, 512)}
-}
-
-func (s *Stack) Push(p Point) {
-	s.stack = append(s.stack, p)
-}
-
-func (s *Stack) Pop() Point {
-	p := s.stack[len(s.stack)-1]
-	s.stack = s.stack[:len(s.stack) - 1]
-	return p
-}
-
-func (s *Stack) Length() int {
-	return len(s.stack)
-}
-
 func getBasinSize(height_map map[Point]int, low_point Point) int {
 	size := 0
-	stack := MakeStack()
-	stack.Push(low_point)
+	basin_stack := stack.MakeStack(512)
+	basin_stack.Push(low_point)
 	seen := map[Point]bool{}
 
-	for ; stack.Length() > 0; {
-		p := stack.Pop()
+	for {
+		v, err := basin_stack.Pop()
+		if err == stack.EmptyStackError {
+			break
+		} else if err != nil {
+			panic(err)
+		}
+		p := v.(Point)
 		size += 1
 		for q := range neighbours(height_map, p) {
 			nb := height_map[q]
 			if height_map[p] < nb && nb < 9 && !seen[q] {
 				seen[q] = true
-				stack.Push(q)
+				basin_stack.Push(q)
 			}
 		}
 	}
