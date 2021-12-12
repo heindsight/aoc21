@@ -8,7 +8,7 @@ type Stack struct {
 
 var EmptyStackError = errors.New("The stack is empty!")
 
-func MakeStack(capacity int) *Stack {
+func NewStack(capacity int) *Stack {
 	return &Stack{stack: make([]interface {}, 0, capacity)}
 }
 

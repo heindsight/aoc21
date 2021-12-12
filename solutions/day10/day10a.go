@@ -32,7 +32,7 @@ var (
 func solveDay10a() {
 	score := 0
 	for {
-		symbols := stack.MakeStack(512)
+		symbols := stack.NewStack(512)
 
 		var line string
 		_, err := fmt.Scanln(&line)

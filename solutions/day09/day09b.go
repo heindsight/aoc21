@@ -28,7 +28,7 @@ func solveDay09b() {
 
 func getBasinSize(height_map map[Point]int, low_point Point) int {
 	size := 0
-	basin_stack := stack.MakeStack(512)
+	basin_stack := stack.NewStack(512)
 	basin_stack.Push(low_point)
 	seen := map[Point]bool{}
 
