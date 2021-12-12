@@ -2,68 +2,28 @@ package day10
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/heindsight/aoc21/registry"
-	"github.com/heindsight/aoc21/utils/stack"
+	"github.com/heindsight/aoc21/utils/input"
 )
 
-var (
-	closing = map[rune]bool {
-		')': true,
-		']': true,
-		'}': true,
-		'>': true,
-	}
-	matches = map[rune]rune {
-		'(': ')',
-		'[': ']',
-		'{': '}',
-		'<': '>',
-	}
-	scores = map[rune]int{
+func solveDay10a() {
+	scores := map[rune]int{
 		')': 3,
 		']': 57,
 		'}': 1197,
 		'>': 25137,
 	}
-)
-
-func solveDay10a() {
 	score := 0
-	for {
-		symbols := stack.NewStack(512)
-
-		var line string
-		_, err := fmt.Scanln(&line)
-		if err == io.EOF {
-			break
+	for line := range input.ReadLines() {
+		_, symbol, err := parse(line)
+		if err == Incomplete {
+			continue
+		} else if err == Corrupt {
+			score += scores[*symbol]
 		} else if err != nil {
 			panic(err)
-		}
 
-		for _, symbol := range line {
-			if !closing[symbol] {
-				symbols.Push(symbol)
-				continue
-			}
-
-			v, err := symbols.Peek()
-			if err == stack.EmptyStackError {
-				break
-			} else if err != nil {
-				panic(err)
-			}
-			head := v.(rune)
-
-			match := matches[head]
-
-			if match == symbol {
-				symbols.Pop()
-			} else {
-				score += scores[symbol]
-				break
-			}
 		}
 	}
 	fmt.Println(score)
