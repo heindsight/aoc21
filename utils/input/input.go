@@ -1,7 +1,9 @@
 package input
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -42,6 +44,22 @@ func ReadCommaSepLineInts() chan InputItemInt {
 				panic(err)
 			}
 			out <- InputItemInt{Index: item.Index, Value: value}
+		}
+		close(out)
+	} ()
+	return out
+}
+
+func ReadLines() chan string {
+	out := make(chan string)
+	go func () {
+		scanner := bufio.NewScanner(os.Stdin)
+
+		for scanner.Scan() {
+			out <- scanner.Text()
+		}
+		if err := scanner.Err(); err != nil {
+			panic(err)
 		}
 		close(out)
 	} ()

@@ -1,13 +1,12 @@
 package day08
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/heindsight/aoc21/registry"
+	"github.com/heindsight/aoc21/utils/input"
 )
 
 func solveDay08a() {
@@ -39,16 +38,9 @@ func readEntries() chan Entry {
 	out := make(chan Entry)
 
 	go func() {
-		scanner := bufio.NewScanner(os.Stdin)
-
-		for scanner.Scan() {
-			line := scanner.Text()
+		for line := range input.ReadLines() {
 			digits := strings.Split(line, " ")
-
 			out <- Entry{signals: digits[:10], output: digits[11:]}
-		}
-		if err := scanner.Err(); err != nil {
-			panic(err)
 		}
 		close(out)
 	}()
