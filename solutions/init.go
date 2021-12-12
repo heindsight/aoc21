@@ -9,4 +9,5 @@ import (
 	_ "github.com/heindsight/aoc21/solutions/day06"
 	_ "github.com/heindsight/aoc21/solutions/day07"
 	_ "github.com/heindsight/aoc21/solutions/day08"
+	_ "github.com/heindsight/aoc21/solutions/day09"
 )
