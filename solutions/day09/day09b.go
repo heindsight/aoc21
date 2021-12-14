@@ -6,11 +6,12 @@ import (
 
 	"github.com/heindsight/aoc21/registry"
 	"github.com/heindsight/aoc21/utils/stack"
+	"github.com/heindsight/aoc21/utils/grid"
 )
 
 func solveDay09b() {
 	basin_sizes := make([]int, 0, 512)
-	height_map := readHeightMap()
+	height_map := grid.ReadDigitGrid()
 
 	for p := range findLowPoints(height_map) {
 		basin_size := getBasinSize(height_map, p)
@@ -26,11 +27,11 @@ func solveDay09b() {
 	fmt.Println(basin_prod)
 }
 
-func getBasinSize(height_map map[Point]int, low_point Point) int {
+func getBasinSize(height_map grid.Grid, low_point grid.Point) int {
 	size := 0
 	basin_stack := stack.NewStack(512)
 	basin_stack.Push(low_point)
-	seen := map[Point]bool{}
+	seen := map[grid.Point]bool{}
 
 	for {
 		v, err := basin_stack.Pop()
@@ -39,11 +40,18 @@ func getBasinSize(height_map map[Point]int, low_point Point) int {
 		} else if err != nil {
 			panic(err)
 		}
-		p := v.(Point)
+		p := v.(grid.Point)
+		height, err := height_map.Get(p)
+		if err != nil {
+			panic(err)
+		}
 		size += 1
-		for q := range neighbours(height_map, p) {
-			nb := height_map[q]
-			if height_map[p] < nb && nb < 9 && !seen[q] {
+		for q := range height_map.Neighbours(p, false) {
+			nb, err := height_map.Get(q)
+			if err != nil {
+				panic(err)
+			}
+			if height.(int) < nb.(int) && nb.(int) < 9 && !seen[q] {
 				seen[q] = true
 				basin_stack.Push(q)
 			}

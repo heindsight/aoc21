@@ -1,40 +1,20 @@
 package day09
 
 import (
-	"fmt"
-	"io"
+	"github.com/heindsight/aoc21/utils/grid"
 )
 
-type Point struct {
-	x int
-	y int
-}
-
-func readHeightMap() map[Point]int {
-	heightmap := map[Point]int{}
-
-	for y := 0; ; y++ {
-		var line string
-		_, err := fmt.Scanln(&line)
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			panic(err)
-		}
-
-		for x, height_rune := range line {
-			heightmap[Point{x: x, y: y}] = int(height_rune - '0')
-		}
-	}
-	return heightmap
-}
-
-func findLowPoints(height_map map[Point]int) chan Point {
-	out := make(chan Point)
+func findLowPoints(height_map grid.Grid) chan grid.Point {
+	out := make(chan grid.Point)
 	go func() {
-		for p := range height_map {
-			if is_lowpoint(height_map, p) {
-				out <- p
+		width, height := height_map.Dimensions()
+		var p grid.Point
+
+		for p.Y = 0; p.Y < height; p.Y++ {
+			for p.X = 0; p.X < width; p.X++ {
+				if is_lowpoint(height_map, p) {
+					out <- p
+				}
 			}
 		}
 		close(out)
@@ -42,35 +22,21 @@ func findLowPoints(height_map map[Point]int) chan Point {
 	return out
 }
 
-func is_lowpoint(height_map map[Point]int, p Point) bool {
-	for q := range neighbours(height_map, p) {
-		if height_map[q] <= height_map[p] {
+func is_lowpoint(height_map grid.Grid, p grid.Point) bool {
+	p_height, err := height_map.Get(p)
+	if err != nil {
+		panic(err)
+	}
+
+	for q := range height_map.Neighbours(p, false) {
+		q_height, _ := height_map.Get(q)
+		if err != nil {
+			panic(err)
+		}
+		if q_height.(int) <= p_height.(int) {
 			return false
 		}
 	}
 
 	return true
-}
-
-func neighbours(height_map map[Point]int, p Point) chan Point {
-	out := make(chan Point)
-	go func() {
-		for nx := p.x - 1; nx <= p.x+1; nx += 2 {
-			q := Point{x: nx, y: p.y}
-			_, found := height_map[q]
-			if found {
-				out <- q
-			}
-		}
-
-		for ny := p.y - 1; ny <= p.y+1; ny += 2 {
-			q := Point{x: p.x, y: ny}
-			_, found := height_map[q]
-			if found {
-				out <- q
-			}
-		}
-		close(out)
-	}()
-	return out
 }
