@@ -11,4 +11,5 @@ import (
 	_ "github.com/heindsight/aoc21/solutions/day08"
 	_ "github.com/heindsight/aoc21/solutions/day09"
 	_ "github.com/heindsight/aoc21/solutions/day10"
+	_ "github.com/heindsight/aoc21/solutions/day11"
 )
