@@ -2,28 +2,35 @@ package stack
 
 import "errors"
 
-type Stack struct {
+type Stack interface {
+	Push(interface{})
+	Peek() (interface{}, error)
+	Pop() (interface{}, error)
+	Length() int
+}
+
+type stack struct {
 	stack []interface {}
 }
 
 var EmptyStackError = errors.New("The stack is empty!")
 
-func NewStack(capacity int) *Stack {
-	return &Stack{stack: make([]interface {}, 0, capacity)}
+func NewStack(capacity int) *stack {
+	return &stack{stack: make([]interface {}, 0, capacity)}
 }
 
-func (s *Stack) Push(val interface {}) {
+func (s *stack) Push(val interface {}) {
 	s.stack = append(s.stack, val)
 }
 
-func (s *Stack) Peek() (interface {}, error) {
+func (s *stack) Peek() (interface {}, error) {
 	if len(s.stack) == 0 {
 		return nil, EmptyStackError
 	}
 	return s.stack[len(s.stack)-1], nil
 }
 
-func (s *Stack) Pop() (interface {}, error) {
+func (s *stack) Pop() (interface {}, error) {
 	if len(s.stack) == 0 {
 		return nil, EmptyStackError
 	}
@@ -32,6 +39,6 @@ func (s *Stack) Pop() (interface {}, error) {
 	return value, nil
 }
 
-func (s *Stack) Length() int {
+func (s *stack) Length() int {
 	return len(s.stack)
 }

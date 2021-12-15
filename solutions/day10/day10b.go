@@ -27,7 +27,7 @@ func solveDay10b() {
 	fmt.Println(scores[len(scores)/2])
 }
 
-func get_auto_complete_score(symbols *stack.Stack) int {
+func get_auto_complete_score(symbols stack.Stack) int {
 	score := 0
 	scores := map[rune]int{
 		')': 1,

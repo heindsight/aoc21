@@ -24,7 +24,7 @@ var (
 	}
 )
 
-func parse(line string) (*stack.Stack, *rune, error) {
+func parse(line string) (stack.Stack, *rune, error) {
 	symbols := stack.NewStack(512)
 	for _, symbol := range line {
 		if !closing[symbol] {
