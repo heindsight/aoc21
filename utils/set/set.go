@@ -5,6 +5,8 @@ type Set interface {
 	Delete(interface{})
 	Contains(interface{}) bool
 	IsSubset(Set) bool
+	Iter() chan interface{}
+	Length() int
 }
 
 type set struct {
@@ -39,4 +41,20 @@ func (s *set) IsSubset(other Set) bool {
 		}
 	}
 	return true
+}
+
+func (s *set) Iter() chan interface{} {
+	out := make(chan interface{})
+
+	go func() {
+		for value := range s.members {
+			out <- value
+		}
+		close(out)
+	}()
+	return out
+}
+
+func (s *set) Length() int {
+	return len(s.members)
 }
