@@ -52,18 +52,18 @@ func readFolds() chan foldInfo {
 func doFold(page set.Set, how foldInfo) {
 	for dot := range page.Iter() {
 		coord := dot.(grid.Point)
+		var fold_coord *int
+
 		if how.direction == 'x' {
-			if coord.X > how.position {
-				page.Delete(coord)
-				coord.X = calc_fold(coord.X, how.position)
-				page.Add(coord)
-			}
+			fold_coord = &coord.X
 		} else if how.direction == 'y' {
-			if coord.Y > how.position {
-				page.Delete(coord)
-				coord.Y = calc_fold(coord.Y, how.position)
-				page.Add(coord)
-			}
+			fold_coord = &coord.Y
+		}
+
+		if *fold_coord > how.position {
+			page.Delete(coord)
+			*fold_coord = calc_fold(*fold_coord, how.position)
+			page.Add(coord)
 		}
 	}
 }
