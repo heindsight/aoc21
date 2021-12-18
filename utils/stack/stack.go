@@ -35,6 +35,7 @@ func (s *stack) Pop() (interface {}, error) {
 		return nil, EmptyStackError
 	}
 	value := s.stack[len(s.stack)-1]
+	s.stack[len(s.stack)-1] = nil
 	s.stack = s.stack[:len(s.stack) - 1]
 	return value, nil
 }

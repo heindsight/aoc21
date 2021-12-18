@@ -13,6 +13,10 @@ type Point struct {
 	Y int
 }
 
+func (p Point) Offset(x, y int) Point {
+	return Point{X: p.X + x, Y: p.Y + y}
+}
+
 var OutOfBoundsError = errors.New("Point out of grid bounds")
 
 type Grid interface {
