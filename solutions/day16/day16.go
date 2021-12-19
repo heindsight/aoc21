@@ -10,6 +10,13 @@ import (
 	"github.com/heindsight/aoc21/registry"
 )
 
+type parsedPacket struct {
+	Version  int64
+	Type     int64
+	Value    int64
+	Children []parsedPacket
+}
+
 type Day16 struct {
 	Evaluate func(parsedPacket) int64
 }
@@ -26,10 +33,6 @@ func (d *Day16) solve() {
 }
 
 func sumVersions(packet parsedPacket) int64 {
-	if packet.Type == 4 {
-		return int64(packet.Version)
-	}
-
 	sum := int64(packet.Version)
 	for _, child := range packet.Children {
 		sum += sumVersions(child)
@@ -84,10 +87,8 @@ func evaluate(packet parsedPacket) int64 {
 }
 
 func hexToBin(h string) string {
-	padded := false
 	if len(h)%2 == 1 {
 		h = h + "0"
-		padded = true
 	}
 	decoded, err := hex.DecodeString(h)
 	if err != nil {
@@ -97,35 +98,16 @@ func hexToBin(h string) string {
 	for _, b := range decoded {
 		fmt.Fprintf(&builder, "%08b", b)
 	}
-	if padded {
-		return strings.TrimSuffix(builder.String(), "0000")
-	}
 	return builder.String()
 }
 
-type parsedPacket struct {
-	Version  int8
-	Type     int8
-	Value    int64
-	Children []parsedPacket
-}
+func parse(bits string) (parsed parsedPacket, length int) {
+	parsed.Version , _ = strconv.ParseInt(bits[0:3], 2, 8)
+	parsed.Type , _ = strconv.ParseInt(bits[3:6], 2, 8)
 
-func parse(bits string) (parsedPacket, int) {
-	var (
-		parsed parsedPacket
-		length int
-	)
-
-	version, _ := strconv.ParseInt(bits[0:3], 2, 8)
-	packetType, _ := strconv.ParseInt(bits[3:6], 2, 8)
-
-	parsed.Version = int8(version)
-	parsed.Type = int8(packetType)
-
-	switch parsed.Type {
-	case 4:
+	if parsed.Type == 4 {
 		parsed.Value, length = parseLiteral(bits)
-	default:
+	} else {
 		parsed.Children, length = parseOperator(bits)
 	}
 	return parsed, length
