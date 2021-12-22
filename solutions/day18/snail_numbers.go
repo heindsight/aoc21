@@ -1,6 +1,10 @@
 package day18
 
-import "math"
+import (
+	"math"
+
+	"github.com/heindsight/aoc21/utils/stack"
+)
 
 type snailNumber struct {
 	value    int
@@ -34,7 +38,7 @@ func (sn *snailNumber) Magnitude() int {
 
 func (sn *snailNumber) Reduce() {
 	for {
-		_, _, exploded := sn.explode(0, nil, -1)
+		exploded := sn.explode()
 		if exploded {
 			continue
 		}
@@ -45,31 +49,42 @@ func (sn *snailNumber) Reduce() {
 	}
 }
 
-func (sn *snailNumber) explode(depth int, left *snailNumber, propagate int) (int, *snailNumber, bool) {
-	if sn.isLeaf() {
-		if propagate != -1 {
-			sn.value += propagate
-			return -1, nil, true
+type frame struct {
+	depth int
+	node *snailNumber
+}
+
+func (sn *snailNumber)explode() bool {
+	s := stack.NewStack(64)
+	s.Push(frame{depth: 0, node: sn})
+
+	add_to_right := -1
+	var previous *snailNumber
+
+	for s.Length() > 0 {
+		popped, _ := s.Pop()
+		sn = popped.(frame).node
+		depth := popped.(frame).depth
+
+		if sn.isLeaf() {
+			if add_to_right != -1 {
+				sn.value += add_to_right
+				return true
+			}
+			previous = sn
+		} else if add_to_right == -1 && depth == 4 && sn.elements[0].isLeaf() && sn.elements[1].isLeaf() {
+			if previous != nil {
+				previous.value += sn.elements[0].value
+			}
+			add_to_right = sn.elements[1].value
+			sn.elements = nil
+			sn.value = 0
+		} else {
+			s.Push(frame{depth: depth + 1, node: &sn.elements[1]})
+			s.Push(frame{depth: depth + 1, node: &sn.elements[0]})
 		}
-		return -1, sn, false
 	}
-
-	if propagate == -1 && depth == 4 && sn.elements[0].isLeaf() && sn.elements[1].isLeaf() {
-		if left != nil {
-			left.value += sn.elements[0].value
-		}
-		propagate := sn.elements[1].value
-		sn.elements = nil
-		sn.value = 0
-		return propagate, nil, false
-	}
-
-	propagate, new_left, done := sn.elements[0].explode(depth+1, left, propagate)
-	if done {
-		return -1, nil, done
-	}
-
-	return sn.elements[1].explode(depth+1, new_left, propagate)
+	return false
 }
 
 func (sn *snailNumber) split() bool {

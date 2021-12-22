@@ -26,12 +26,14 @@ type interval struct {
 
 func Solns(minP, maxP, minV int, maxV int, unbound_upper bool) []interval  {
 	solns := []interval{}
-	for vX := minV; vX <= maxV; vX++ {
-		min_1, max_1 := quadratic(1.0, -float64(2*vX+1), float64(2*minP))
-		lower := math.Max(0.0, min_1)
-		upper := max_1
+	for v := minV; v <= maxV; v++ {
+		lower, upper := quadratic(1.0, -float64(2*v+1), float64(2*minP))
+		lower = math.Max(0.0, lower)
+		if unbound_upper && upper >= float64(v + 1 ) {
+			upper = math.Inf(1)
+		}
 
-		min_1, max_1 = quadratic(1.0, -float64(2*vX+1), float64(2*maxP))
+		min_1, max_1 := quadratic(1.0, -float64(2*v+1), float64(2*maxP))
 		if !math.IsNaN(min_1) {
 			if lower <= min_1 {
 				upper = math.Min(upper, min_1)
@@ -44,9 +46,6 @@ func Solns(minP, maxP, minV int, maxV int, unbound_upper bool) []interval  {
 
 		lower = math.Ceil(lower)
 		upper = math.Floor(upper)
-		if unbound_upper && upper >= float64(vX + 1) {
-			upper = math.Inf(1)
-		}
 
 		if lower <= upper {
 			solns = append(solns, interval{lower, upper})
