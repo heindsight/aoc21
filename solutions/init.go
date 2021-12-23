@@ -19,4 +19,5 @@ import (
 	_ "github.com/heindsight/aoc21/solutions/day16"
 	_ "github.com/heindsight/aoc21/solutions/day17"
 	_ "github.com/heindsight/aoc21/solutions/day18"
+	_ "github.com/heindsight/aoc21/solutions/day19"
 )

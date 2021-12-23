@@ -7,6 +7,8 @@ type Set interface {
 	IsSubset(Set) bool
 	Iter() chan interface{}
 	Length() int
+	Intersection(Set) Set
+	Copy() Set
 }
 
 type set struct {
@@ -57,4 +59,22 @@ func (s *set) Iter() chan interface{} {
 
 func (s *set) Length() int {
 	return len(s.members)
+}
+
+func (s *set) Intersection(other Set) Set {
+	intersect := NewSet()
+	for value := range s.members {
+		if other.Contains(value) {
+			intersect.Add(value)
+		}
+	}
+	return intersect
+}
+
+func (s *set) Copy() Set {
+	c := NewSet()
+	for v := range s.members {
+		c.Add(v)
+	}
+	return c
 }
