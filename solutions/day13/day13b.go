@@ -20,7 +20,7 @@ func solveDay13b() {
 }
 
 func printPage(page set.Set) {
-	rendered := grid.NewGrid()
+	rendered := grid.NewGrid(true)
 	for dot := range page.Iter() {
 		coord := dot.(grid.Point)
 		rendered.Set(coord, '#')
