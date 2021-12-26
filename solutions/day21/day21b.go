@@ -51,10 +51,10 @@ func (u *universe) Roll() []universe {
 }
 
 func (u *universe) Winner() (int, bool) {
-	if u.scores[0] >= 21 {
-		return 0, true
-	} else if u.scores[1] >= 21 {
-		return 1, true
+	for player := 0; player < 2; player++ {
+		if u.scores[player] >= 21 {
+			return player, true
+		}
 	}
 	return -1, false
 }
