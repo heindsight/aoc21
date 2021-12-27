@@ -43,9 +43,11 @@ func (u *universe) Roll() []universe {
 	for i := 0; i < 27; i++ {
 		splits[i] = *u
 		d := 3 + i%3 + (i/3)%3 + (i/9)%3
-		splits[i].positions[u.turn] = (u.positions[u.turn] + d - 1) % 10 + 1
-		splits[i].scores[u.turn] = u.scores[u.turn] + splits[i].positions[u.turn]
-		splits[i].turn = (u.turn + 1) % 2
+		player := u.turn
+
+		splits[i].turn = (player + 1) % 2
+		splits[i].positions[player] = (splits[i].positions[player] + d - 1) % 10 + 1
+		splits[i].scores[player] += splits[i].positions[player]
 	}
 	return splits
 }
@@ -64,8 +66,7 @@ type multiverse map[universe][2]int64
 func (m *multiverse) Play(u universe) (int64, int64) {
 	wins, found := (*m)[u]
 	if !found {
-		splits := u.Roll()
-		for _, child := range splits {
+		for _, child := range u.Roll() {
 			winner, has_winner := child.Winner()
 			if has_winner {
 				wins[winner] += 1
