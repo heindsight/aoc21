@@ -32,44 +32,43 @@ type Image struct {
 
 func (img *Image) Process(rules []int) Image {
 	enhanced := Image{pixels: grid.NewGrid(false)}
-	topLeft, botRight := img.pixels.BoundingBox()
 
 	ruleLookups := make(map[grid.Point]uint)
 	defaultLookups := map[int]uint {
-		1: 511,
+		1: 0x1ff,
 		0: 0,
 	}
 
-	var p grid.Point
-	for p.Y = topLeft.Y; p.Y <= botRight.Y; p.Y++ {
-		for p.X = topLeft.X; p.X <= botRight.X; p.X++ {
-			val := img.Get(p)
-			i := 0
-			for q := range img.pixels.Region(p) {
-				lookup, found := ruleLookups[q]
-				if !found {
-					lookup = defaultLookups[img.missing]
-				}
-				if val == 1 {
-					lookup |= uint(1) << i
-				} else {
-					lookup &= ^(uint(1)<<i)
-				}
-				ruleLookups[q] = lookup
-				i++
+	for p := range img.pixels.Iter() {
+		val := img.Get(p)
+		i := 0
+		for q := range img.pixels.Region(p) {
+			lookup, found := ruleLookups[q]
+			if !found {
+				lookup = defaultLookups[img.missing]
 			}
+			if val == 1 {
+				lookup |= uint(1) << i
+			} else {
+				lookup &= ^(uint(1)<<i)
+			}
+			ruleLookups[q] = lookup
+			i++
 		}
 	}
 
-	for p, lookup := range ruleLookups {
-		val := rules[lookup]
-		enhanced.Set(p, val)
-	}
 
 	if img.missing == 0 {
 		enhanced.missing = rules[0]
 	} else {
 		enhanced.missing = rules[511]
+	}
+
+	for p, lookup := range ruleLookups {
+		val := rules[lookup]
+		if val != enhanced.missing {
+			enhanced.Set(p, val)
+		}
 	}
 
 	return enhanced
@@ -119,14 +118,11 @@ func readImage(inLines chan string) Image {
 	img := Image{pixels: grid.NewGrid(false), missing: 0}
 	row := 0
 
-	pixelMap := map[rune]int {
-		'#': 1,
-		'.': 0,
-	}
-
 	for line := range inLines {
 		for col, pixel := range line {
-			img.Set(grid.Point{X: col, Y: row}, pixelMap[pixel])
+			if pixel == '#' {
+				img.Set(grid.Point{X: col, Y: row}, 1)
+			}
 		}
 		row++
 	}

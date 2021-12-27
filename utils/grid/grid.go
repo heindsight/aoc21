@@ -27,6 +27,7 @@ type Grid interface {
 	BoundingBox() (Point, Point)
 	Region(Point) chan Point
 	Neighbours(Point, bool) chan Point
+	Iter() chan Point
 }
 
 type grid struct {
@@ -130,6 +131,19 @@ func (g *grid) Neighbours(p Point, include_diagonal bool) chan Point {
 				continue
 			}
 			out <- q
+		}
+		close(out)
+	}()
+	return out
+}
+
+func (g *grid) Iter() chan Point {
+	out := make(chan Point, len(g.cells))
+	go func() {
+		g.lock.Lock()
+		defer g.lock.Unlock()
+		for p := range g.cells {
+			out <- p
 		}
 		close(out)
 	}()
