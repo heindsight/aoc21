@@ -24,7 +24,7 @@ type cube struct {
 	Z int
 }
 
-func executeBootStep(step *BootStep, reactor set.Set) {
+func executeBootStep(step BootStep, reactor set.Set) {
 	x_min := numeric.Max(step.Region.X.Lower, -50)
 	x_max := numeric.Min(step.Region.X.Upper, 51)
 

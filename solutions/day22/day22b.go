@@ -5,57 +5,41 @@ import (
 
 	"github.com/heindsight/aoc21/registry"
 	"github.com/heindsight/aoc21/utils/input"
-	"github.com/heindsight/aoc21/utils/set"
 )
 
 func solveDay22b() {
-	cuboids := set.NewSet()
+	reactor := []BootStep{}
 
 	for line := range input.ReadLines() {
 		step := parseBootStep(line)
-		updateCuboids(step, cuboids)
+		updateCuboids(step, &reactor)
 	}
-	numOn := countOn(cuboids)
+	numOn := countOn(reactor)
 	fmt.Println(numOn)
 }
 
-func updateCuboids(step *BootStep, cuboids set.Set) {
-	intersect := []Cuboid{}
-
-	for item := range cuboids.Iter() {
-		cu := item.(Cuboid)
-
-		if cu.Intersects(&step.Region) {
-			intersect = append(intersect, cu)
+func updateCuboids(step BootStep, reactor *[]BootStep) {
+	for _, bs := range *reactor {
+		intersection, intersects := bs.Region.Intersection(&step.Region)
+		if intersects {
+			*reactor = append(*reactor, BootStep{Region: intersection, On: !bs.On})
 		}
 	}
-
-	if step.On && len(intersect) == 0 {
-		cuboids.Add(step.Region)
-		return
-	}
-
-	for _, cu := range intersect {
-		cuboids.Delete(cu)
-	}
-
-	intersect = append(intersect, step.Region)
-	intersect = SplitCuboids(intersect)
-
-	for _, cu := range intersect {
-		if !step.On && cu.Intersects(&step.Region) {
-			continue
-		}
-		cuboids.Add(cu)
+	
+	if step.On {
+		*reactor = append(*reactor, step)
 	}
 }
 
-func countOn(cuboids set.Set) uint64 {
+func countOn(cuboids []BootStep) uint64 {
 	var count uint64
 
-	for item := range cuboids.Iter() {
-		cu := item.(Cuboid)
-		count += cu.Volume()
+	for _, item := range cuboids {
+		if item.On {
+			count += item.Region.Volume()
+		} else {
+			count -= item.Region.Volume()
+		}
 	}
 	return count
 }
