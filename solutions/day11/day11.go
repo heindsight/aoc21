@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	iterations = 100
+	iterations     = 100
 	flash_theshold = 9
 )
 
@@ -17,7 +17,7 @@ func solveDay11a() {
 	flashes := 0
 
 	for step := 1; step <= iterations; step++ {
-		flashes += simulate_step(octopus_map)	
+		flashes += simulate_step(octopus_map)
 	}
 
 	fmt.Println(flashes)
@@ -46,10 +46,7 @@ func simulate_step(octopi grid.Grid) int {
 	}
 	for pos.Y = 0; pos.Y < height; pos.Y++ {
 		for pos.X = 0; pos.X < width; pos.X++ {
-			octopus, err := octopi.Get(pos)
-			if err != nil {
-				panic(err)
-			}
+			octopus, _ := octopi.Get(pos)
 			if octopus.(int) > flash_theshold {
 				octopi.Set(pos, 0)
 			}
@@ -61,10 +58,10 @@ func simulate_step(octopi grid.Grid) int {
 func bump_energy(octopi grid.Grid, pos grid.Point) int {
 	octopus, err := octopi.Get(pos)
 	if err != nil {
-		panic(err)
+		return 0
 	}
 	energy := octopus.(int)
-	octopi.Set(pos, energy + 1)
+	octopi.Set(pos, energy+1)
 
 	if energy == flash_theshold {
 		return flash(octopi, pos)
@@ -74,7 +71,7 @@ func bump_energy(octopi grid.Grid, pos grid.Point) int {
 
 func flash(octopi grid.Grid, pos grid.Point) int {
 	flashes := 1
-	for q := range octopi.Neighbours(pos, true) {
+	for _, q := range pos.Neighbours(true) {
 		flashes += bump_energy(octopi, q)
 	}
 	return flashes

@@ -28,10 +28,10 @@ func is_lowpoint(height_map grid.Grid, p grid.Point) bool {
 		panic(err)
 	}
 
-	for q := range height_map.Neighbours(p, false) {
-		q_height, _ := height_map.Get(q)
+	for _, q := range p.Neighbours(false) {
+		q_height, err := height_map.Get(q)
 		if err != nil {
-			panic(err)
+			continue
 		}
 		if q_height.(int) <= p_height.(int) {
 			return false

@@ -42,7 +42,7 @@ func (img *Image) Process(rules []int) Image {
 	for p := range img.pixels.Iter() {
 		val := img.Get(p)
 		i := 0
-		for q := range img.pixels.Region(p) {
+		for _, q := range p.Region() {
 			lookup, found := ruleLookups[q]
 			if !found {
 				lookup = defaultLookups[img.missing]

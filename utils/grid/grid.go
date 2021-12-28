@@ -13,6 +13,41 @@ type Point struct {
 	Y int
 }
 
+func (p *Point) Region() []Point {
+	out := make([]Point, 9)
+	var q Point
+
+	i := 0
+
+	for q.Y = p.Y - 1; q.Y <= p.Y+1; q.Y++ {
+		for q.X = p.X - 1; q.X <= p.X+1; q.X++ {
+			out[i] = q
+			i++
+		}
+	}
+	return out
+}
+
+func (p *Point) Neighbours(include_diagonal bool) []Point {
+	var out []Point
+
+	if include_diagonal {
+		out = make([]Point, 8)
+	} else {
+		out = make([]Point, 4)
+	}
+
+	i := 0
+	for _, q := range p.Region() {
+		if (q == *p) || (!include_diagonal && q.X != p.X && q.Y != p.Y) {
+			continue
+		}
+		out[i] = q
+		i++
+	}
+	return out
+}
+
 func (p Point) Offset(x, y int) Point {
 	return Point{X: p.X + x, Y: p.Y + y}
 }
@@ -25,19 +60,17 @@ type Grid interface {
 	Dimensions() (int, int)
 	Area() int
 	BoundingBox() (Point, Point)
-	Region(Point) chan Point
-	Neighbours(Point, bool) chan Point
 	Iter() chan Point
 }
 
 type grid struct {
-	cells map[Point]interface{}
-	x_min int
-	y_min int
-	x_max int
-	y_max int
+	cells   map[Point]interface{}
+	x_min   int
+	y_min   int
+	x_max   int
+	y_max   int
 	bounded bool
-	lock sync.Mutex
+	lock    sync.Mutex
 }
 
 func NewGrid(bounded bool) *grid {
@@ -91,52 +124,6 @@ func (g *grid) BoundingBox() (Point, Point) {
 	return topLeft, botRight
 }
 
-
-func (g *grid) Region(p Point) chan Point {
-	out := make(chan Point, 9)
-	go func() {
-		var (
-			q Point
-			x_min, y_min, x_max, y_max int
-		)
-
-		if g.bounded {
-			width, height := g.Dimensions()
-			x_min = numeric.Max(0, p.X - 1)
-			y_min = numeric.Max(0, p.Y - 1)
-			x_max = numeric.Min(p.X + 2, width)
-			y_max = numeric.Min(p.Y + 2, height)
-		} else {
-			x_min = p.X - 1
-			y_min = p.Y - 1
-			x_max = p.X + 2
-			y_max = p.Y + 2
-		}
-
-		for q.Y = y_min; q.Y < y_max; q.Y++ {
-			for q.X = x_min; q.X < x_max; q.X++ {
-				out <- q
-			}
-		}
-		close(out)
-	}()
-	return out
-}
-
-func (g *grid) Neighbours(p Point, include_diagonal bool) chan Point {
-	out := make(chan Point, 8)
-	go func() {
-		for q := range g.Region(p) {
-			if (q == p) || (!include_diagonal && q.X != p.X && q.Y != p.Y) {
-				continue
-			}
-			out <- q
-		}
-		close(out)
-	}()
-	return out
-}
-
 func (g *grid) Iter() chan Point {
 	out := make(chan Point, len(g.cells))
 	go func() {
@@ -156,7 +143,7 @@ func ReadDigitGrid() *grid {
 
 	for line := range input.ReadLines() {
 		for x, char := range line {
-			grid.Set(Point{X: x, Y: y}, int(char - '0'))
+			grid.Set(Point{X: x, Y: y}, int(char-'0'))
 		}
 		y++
 	}

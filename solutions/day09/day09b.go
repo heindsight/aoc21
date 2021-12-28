@@ -37,19 +37,14 @@ func getBasinSize(height_map grid.Grid, low_point grid.Point) int {
 		v, err := basin_stack.Pop()
 		if err == stack.EmptyStackError {
 			break
-		} else if err != nil {
-			panic(err)
 		}
 		p := v.(grid.Point)
-		height, err := height_map.Get(p)
-		if err != nil {
-			panic(err)
-		}
+		height, _ := height_map.Get(p)
 		size += 1
-		for q := range height_map.Neighbours(p, false) {
+		for _, q := range p.Neighbours(false) {
 			nb, err := height_map.Get(q)
 			if err != nil {
-				panic(err)
+				continue
 			}
 			if height.(int) < nb.(int) && nb.(int) < 9 && !seen[q] {
 				seen[q] = true

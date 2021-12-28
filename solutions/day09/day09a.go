@@ -12,10 +12,7 @@ func solveDay09a() {
 	height_map := grid.ReadDigitGrid()
 
 	for p := range findLowPoints(height_map) {
-		height, err := height_map.Get(p)
-		if err != nil {
-			panic(err)
-		}
+		height, _ := height_map.Get(p)
 		total_risk += height.(int) + 1
 	}
 

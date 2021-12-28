@@ -66,14 +66,14 @@ func findLowestRiskPath(cm grid.Grid, start grid.Point, goal grid.Point) int {
 			return total_risk
 		}
 
-		for nb_coord := range cm.Neighbours(position, false) {
+		for _, nb_coord := range position.Neighbours(false) {
 			if visited.Contains(nb_coord) {
 				continue
 			}
 
 			nb_risk, err := cm.Get(nb_coord)
 			if err != nil {
-				panic(err)
+				continue
 			}
 
 			q_item := pqueue.MakeItem(nb_coord, - (total_risk + nb_risk.(int)))

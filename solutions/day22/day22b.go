@@ -25,7 +25,7 @@ func updateCuboids(step BootStep, reactor *[]BootStep) {
 			*reactor = append(*reactor, BootStep{Region: intersection, On: !bs.On})
 		}
 	}
-	
+
 	if step.On {
 		*reactor = append(*reactor, step)
 	}
